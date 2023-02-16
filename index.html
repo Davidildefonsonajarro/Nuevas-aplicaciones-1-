@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dibujo vectorial</title>
+    <style>
+      #canvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Drawing Vectorial Fast</h1>
+    <canvas id="canvas" width="1280" height="720"></canvas>
+    <br />
+    <input type="color" id="colorPicker" />
+    <select id="lineWidthSelect">
+      <option value="0.5">0.5</option>
+      <option value="1.0">1.0</option>
+      <option value="2.0">2.0</option>
+      <option value="3.0">3.0</option>
+      <option value="4.0">4.0</option>
+      <option value="5.0">5.0</option>
+      <option value="6.0">6.0</option>
+      <option value="7.0">7.0</option>
+      <option value="8.0">8.0</option>
+    </select>
+    <button id="clearButton">Borrar</button>
+    <input type="file" id="fileInput">
+    <script>
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      let color = '#000000';
+      let lineWidth = 1;
+
+      function draw(e) {
+        context.lineTo(e.offsetX, e.offsetY);
+        context.stroke();
+      }
+
+      function startDrawing(e) {
+        context.beginPath();
+        context.moveTo(e.offsetX, e.offsetY);
+        canvas.addEventListener('mousemove', draw);
+      }
+
+      function stopDrawing(e) {
+        canvas.removeEventListener('mousemove', draw);
+      }
+
+      function changeColor(e) {
+        color = e.target.value;
+        context.strokeStyle = color;
+      }
+
+      function changeLineWidth(e) {
+        lineWidth = e.target.value;
+        context.lineWidth = lineWidth;
+      }
+
+      function clearCanvas() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      function handleFileSelect(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+          const img = new Image();
+          img.onload = function() {
+            context.drawImage(img, 0, 0, canvas.width, canvas.height);
+          };
+          img.src = event.target.result;
+        };
+
+        reader.readAsDataURL(file);
+      }
+
+      context.strokeStyle = color;
+      context.lineWidth = lineWidth;
+      context.lineCap = 'round';
+
+      canvas.addEventListener('mousedown', startDrawing);
+      canvas.addEventListener('mouseup', stopDrawing);
+
+      colorPicker.addEventListener('input', changeColor);
+      lineWidthSelect.addEventListener('change', changeLineWidth);
+      clearButton.addEventListener('click', clearCanvas);
+      fileInput.addEventListener('change', handleFileSelect);
+    </script>
+  </body>
+</html>
+
